@@ -1,4 +1,4 @@
-import * as jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 export type JwtPayload = {
     sub: string;
@@ -13,20 +13,22 @@ function isJwtPayload(x: unknown): x is JwtPayload {
 
 function mustGetEnv(name: string): string {
     const v = process.env[name];
-    if (!v) throw new Error(`${name} missing from env`)
+    if (!v) {
+      throw new Error(`${name} missing from env`)
+    }
     return v;
 }
 
 const accessRaw = process.env.ACCESS_EXPIRES_IN;
 const refreshRaw = process.env.ACCESS_EXPIRES_IN;
+
 const ACCESS_SECRET: jwt.Secret = mustGetEnv("JWT_ACCESS_SECRET") ;
 const REFRESH_SECRET: jwt.Secret = mustGetEnv("JWT_REFRESH_SECRET") ;
 const ACCESS_EXPIRES_IN: number = accessRaw ? Number(accessRaw) : 900;
 const REFRESH_EXPIRES_IN: number = refreshRaw ? Number(refreshRaw) : 604800;
 
-export function signAccessToken(payload: JwtPayload ) {
-    const options: jwt.SignOptions = { expiresIn: ACCESS_EXPIRES_IN };
-  return jwt.sign(payload, ACCESS_SECRET, options);
+export function signAccessToken(payload: JwtPayload)  {
+  return jwt.sign(payload, ACCESS_SECRET, { expiresIn: ACCESS_EXPIRES_IN})
 }
 
 export function signRefreshToken(payload: JwtPayload) {
