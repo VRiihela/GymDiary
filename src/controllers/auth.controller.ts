@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcrypt"
 import { User } from "../models/userModel.js"
-import { signAccessToken, signRefreshToken } from "../utils/jwt.js";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt.js";
 
 
 const saltRounds = 12
@@ -34,7 +34,7 @@ export async function register(req: Request, res: Response) {
 }
 
 export async function login(req: Request, res: Response) {
-    
+
     const { email, password } = req.body as { email?: string, password?:string };
     
     if(!email || !password)  {
@@ -56,8 +56,59 @@ export async function login(req: Request, res: Response) {
     const refreshToken = signRefreshToken(payload)
 
     user.refreshTokenHash = await bcrypt.hash(refreshToken, saltRounds);
+    await user.save();
 
     setRefreschtokenCookie(res, refreshToken);
 
     return res.status(200).json({ accessToken });
+}
+
+export async function refresh(req: Request, res: Response) {
+    const token = req.cookies?.refreshToken as string | undefined;
+    if(!token)  {
+        return res.status(401).json({ error: "Missing refresh token" });
+    }
+    let payload: { sub: string, email: string };
+
+    try {
+        payload = verifyRefreshToken(token);
+    }  catch {
+        return res.status(401).json({ error: "Invalid refresh token" })
+    }
+    const user = await User.findById(payload.sub);
+    if (!user || !user.refreshTokenHash)    {
+        return res.status(401).json({ error: "Invalid session"});
+    }
+
+    const ok = await bcrypt.compare(token, user.refreshTokenHash);
+    if(!ok) {
+        return res.status(401).json({ error: "Invalid session" });
+    }
+
+    const newPayload = { sub: String(user._id), email: user.email };
+    const accessToken = signRefreshToken(newPayload);
+    const newRefreshToken = signRefreshToken(newPayload);
+
+    user.refreshTokenHash = await bcrypt.hash(newRefreshToken, saltRounds);
+    await user.save();
+    setRefreschtokenCookie(res, newRefreshToken);
+
+    return res.status(200).json({ accessToken })
+}
+
+export async function logout(req: Request, res: Response) {
+  const token = req.cookies?.refreshToken as string | undefined;
+
+  if (token) {
+    // yritä löytää käyttäjä ja nollaa session hash
+    try {
+      const payload = verifyRefreshToken(token);
+      await User.findByIdAndUpdate(payload.sub, { refreshTokenHash: null });
+    } catch {
+      // jos token on invalid, silti tyhjennetään cookie
+    }
+  }
+
+  res.clearCookie("refreshToken", { path: "/api/auth" });
+  return res.status(204).send();
 }
