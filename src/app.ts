@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js"
 import healthRouter from "./routes/healt.js";
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
-// import mongoSanitize from "express-mongo-sanitize"
+import mongoSanitize from "express-mongo-sanitize"
 
 export const app = express();
 
@@ -17,7 +17,17 @@ app.use(express.json());
 app.use(urlencoded({ extended: false }))
 app.use(morgan("dev"));
 app.use(cookieParser());
-// app.use(mongoSanitize());
+
+app.use((req, _res, next)   => {
+    Object.defineProperty(req, "query", {
+        value: { ...(req as any).query },
+        writable: true,
+        configurable: true,
+        enumerable: true,
+    });
+    next()
+})
+app.use(mongoSanitize());
 
 app.use("/api/healt", healthRouter);
 app.use("/api/auth", authRouter);
