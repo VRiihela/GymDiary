@@ -43,3 +43,12 @@ export function verifyRefreshToken(token: string): JwtPayload {
     }
   return decoded;
 }
+
+export function verifyAccessToken(token: string): JwtPayload {
+  const decoded = jwt.verify(token, ACCESS_SECRET);
+
+  if (!isJwtPayload(decoded)) {
+    throw new Error("Invalid token payload");
+  }
+  return decoded;
+}
