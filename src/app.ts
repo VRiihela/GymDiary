@@ -6,6 +6,7 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js"
 import healthRouter from "./routes/healt.js";
+import workoutRouter from "./routes/workout.routes.js"
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import mongoSanitize from "express-mongo-sanitize"
 
@@ -31,6 +32,7 @@ app.use(mongoSanitize());
 
 app.use("/api/healt", healthRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/workout", workoutRouter);
 
 app.use(notFound)
 app.use(errorHandler)
