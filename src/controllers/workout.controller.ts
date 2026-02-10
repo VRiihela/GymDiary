@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { Types } from "mongoose";
 import { Workout } from "../models/workoutModel.js";
-import type { workoutCreateInput } from "../schemas/workout.schema.js";
+// import type { workoutCreateInput } from "../schemas/workout.schema.js";
 
 export async function listWorkouts(req:Request, res: Response) {
     const userId = req.user?.sub;
