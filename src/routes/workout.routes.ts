@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireAuth } from "../middlewares/auth.js";
-import { createWorkout, getWorkoutById, deleteWorkout, listWorkouts } from "../controllers/workout.controller.js";
+import { createWorkout, getWorkoutById, deleteWorkout, listWorkouts, updateWorkout } from "../controllers/workout.controller.js";
 
 const router = Router();
 
@@ -11,5 +11,6 @@ router.get("/", listWorkouts);
 router.post("/", createWorkout);
 router.get("/:id", getWorkoutById);
 router.delete("/:id", deleteWorkout);
+router.put("/:id", updateWorkout)
 
 export default router;

@@ -73,3 +73,58 @@ export async function deleteWorkout(req: Request <{ id: string }>, res: Response
 
     return res.status(204).send();
 }
+
+export async function updateWorkout(req: Request <{id: string}>, res: Response) {
+  const userId = req.user?.sub;
+  
+  if (!userId) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+  const { id } = req.params;
+  if (!Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ error: "Invalid workout id" });
+  }
+
+  const body = (req.body ?? {}) as {
+    title?: string;
+    date?: string;
+    exercises?: unknown;
+  };
+
+  const update: Record<string, unknown> = {};
+
+  if (typeof body.title === "string") {
+    const title = body.title.trim();
+    if (!title) return res.status(400).json({ error: "title cannot be empty" });
+    update.title = title;
+  }
+
+  if (typeof body.date === "string") {
+    const d = new Date(body.date);
+    if (Number.isNaN(d.getTime())) {
+      return res.status(400).json({ error: "Invalid date" });
+    }
+    update.date = d;
+  }
+
+  if (body.exercises !== undefined) {
+    if (!Array.isArray(body.exercises)) {
+      return res.status(400).json({ error: "exercises must be an array" });
+    }
+    update.exercises = body.exercises;
+  }
+
+  if (Object.keys(update).length === 0) {
+    return res.status(400).json({ error: "No updatable fields provided" });
+  }
+
+  const updated = await Workout.findOneAndUpdate(
+    { _id: id, userId },
+    { $set: update },
+    { new: true }
+  );
+
+  if (!updated) return res.status(404).json({ error: "Workout not found" });
+
+  return res.json(updated);
+}
