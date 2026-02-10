@@ -32,7 +32,7 @@ app.use(mongoSanitize());
 
 app.use("/api/healt", healthRouter);
 app.use("/api/auth", authRouter);
-app.use("/api/workout", workoutRouter);
+app.use("/api/workouts", workoutRouter);
 
 app.use(notFound)
 app.use(errorHandler)
