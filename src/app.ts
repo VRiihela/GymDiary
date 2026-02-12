@@ -10,7 +10,6 @@ import workoutRouter from "./routes/workout.routes.js"
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import mongoSanitize from "express-mongo-sanitize";
 
-
 export const app = express();
 
 app.use(helmet());
