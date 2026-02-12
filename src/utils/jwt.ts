@@ -20,7 +20,7 @@ function mustGetEnv(name: string): string {
 }
 
 const accessRaw = process.env.ACCESS_EXPIRES_IN;
-const refreshRaw = process.env.ACCESS_EXPIRES_IN;
+const refreshRaw = process.env.REFRESH_EXPIRES_IN;
 
 const ACCESS_SECRET: jwt.Secret = mustGetEnv("JWT_ACCESS_SECRET") ;
 const REFRESH_SECRET: jwt.Secret = mustGetEnv("JWT_REFRESH_SECRET") ;

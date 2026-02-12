@@ -5,7 +5,7 @@ import morgan from "morgan";
 
 import cookieParser from "cookie-parser";
 import authRouter from "./routes/auth.routes.js"
-import healthRouter from "./routes/healt.js";
+import healthRouter from "./routes/health.js";
 import workoutRouter from "./routes/workout.routes.js"
 import { notFound, errorHandler } from "./middlewares/errorHandler.js";
 import mongoSanitize from "express-mongo-sanitize";
