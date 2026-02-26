@@ -25,5 +25,10 @@ export const workoutUpdateSchema = z.object({
     message: "No updatable fields provided",
 });
 
+export const workoutIdParamsSchema = z.object({
+    id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid workout id"),
+});
+
 export type workoutCreateInput = z.infer<typeof workoutCreateSchema>;
 export type workoutUpdateInput = z.infer<typeof workoutUpdateSchema>;
+export type workoutIdParamsInput = z.infer<typeof workoutIdParamsSchema>;

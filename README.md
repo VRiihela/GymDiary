@@ -109,16 +109,6 @@ REFRESH_EXPIRES_IN=
 npm run test
 ```
 
----
-
-## Notes
-
-This project was built as a backend portfolio project to demonstrate:
-- Secure authentication handling
-- Clean Express architecture
-- Middleware-based validation
-- Modular code organization
-- Basic security best practices
 
 ---
 

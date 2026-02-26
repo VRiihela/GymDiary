@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-import { Types } from "mongoose";
 import { Workout } from "../models/workoutModel.js";
 // import type { workoutCreateInput } from "../schemas/workout.schema.js";
 
@@ -38,10 +37,6 @@ export async function getWorkoutById(req:Request <{ id: string }>, res: Response
     }
 
     const { id } = req.params;
-    // Id format check
-    if (!Types.ObjectId.isValid(id))    {
-        return res.status(400).json({ error: "Invalid workout id" });
-    }
 
     const workout = await Workout.findOne({ _id: id, userId});
 
@@ -60,10 +55,6 @@ export async function deleteWorkout(req: Request <{ id: string }>, res: Response
 
     const { id } = req.params;
 
-    if (!Types.ObjectId.isValid(id))    {
-        return res.status(400).json({ error: "Invalid workout id"})
-    }
-
     const deleted = await Workout.findByIdAndDelete({ _id: id, userId});
 
     if (!deleted)   {
@@ -80,9 +71,6 @@ export async function updateWorkout(req: Request <{id: string}>, res: Response) 
         return res.status(401).json({ error: "Unauthorized" });
     }
     const { id } = req.params;
-    if (!Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ error: "Invalid workout id" });
-    }
 
     const body = req.body as { title: string; date?: string; exercises?: unknown[] }
 
